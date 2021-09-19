@@ -20,11 +20,11 @@
             </form>
             <form id="form" v-on:submit.prevent="calcAZ">
               <label for="lat" style="padding-right: 10px;">Latitude (deg):</label>
-              <input type="number" step="any" min="-90.000" max="90.000" id="lat" name="lat" value="34.0738" required><br>
+              <input type="number" step="any" min="-90.000" max="90.000" id="lat" name="lat" value="34.1636" required><br>
               <label for="long" style="padding-right: 10px;">Longitude (deg):</label>
-              <input type="number" step="any" min="-180.000" max="180.000"  id="long" name="long" value="-118.8328" required><br>
+              <input type="number" step="any" min="-180.000" max="180.000"  id="long" name="long" value="-118.1967" required><br>
               <label for="alt" style="padding-right: 10px;">SOTA Altitude (m):</label>
-              <input type="number" step="any" min="0.0" max="9000.000"  id="alt" name="alt" value="764" required><br>
+              <input type="number" step="any" min="0.0" max="9000.000"  id="alt" name="alt" value="576" required><br>
               <input type="submit" class="btn btn-primary" value="Calculate AZ">
               <br><br>
               <div v-show="isGenerating" class="spinner-border text-primary" role="status">
@@ -217,7 +217,7 @@ export default {
         "sota_summit_alt_thres": 25
       }
       axios
-        .post('http://localhost:8080', data)
+        .post('http://localhost:8082', data)
         .then(response => {
           this.info = response.data.az
         })
