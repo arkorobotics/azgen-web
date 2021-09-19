@@ -213,11 +213,12 @@ export default {
         "summit_lat": lat,
         "summit_long": long,
         "summit_alt": alt,
-        "deg_delta": 0.010,
+        "deg_delta": 0.040,
         "sota_summit_alt_thres": 25
       }
       axios
-        .post('http://localhost:8082', data)
+        //.post('http://localhost:8082', data)
+        .post('https://api.activation.zone', data)
         .then(response => {
           this.info = response.data.az
         })
