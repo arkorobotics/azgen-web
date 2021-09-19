@@ -26,4 +26,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Credits
 
-Front end application by @eheinrich; Webpage design by @arkorobotics;
+Front end application by @eheinrich and @arkorobotics;

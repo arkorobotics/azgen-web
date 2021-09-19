@@ -1,41 +1,47 @@
 <template>
   <div>
-  <nav class="navbar navbar-expand-sm bg-dark navbar-dark" style="height: 40px;line-height: 0.5">
-    <a class="navbar-brand p-2" href="#">SOTA Activation Zone Estimator</a>
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link p-2">By: N6ARA</a>
-      </li>
-    </ul>
-  </nav>
-  <div class="container-fluid" style="padding: 0px; border:0px">
-    <div class="span12">
-      <div id="map" class="map" style="z-index: 0"></div>
-    </div>
-    <div class="span12" style="padding: 10px; border:0px">
-    </div>
-    <div id="app">
-      <div class="span12" id="polygontext" style="padding: 10px; border:0px">
-        <form id="form" v-on:submit.prevent="calcAZ">
-          <label for="lat">Latitude (deg):</label>
-          <input type="number" step="any" min="-90.000" max="90.000" id="lat" name="lat" value="34.0738" required><br>
-          <label for="long">Longitude (deg):</label>
-          <input type="number" step="any" min="-180.000" max="180.000"  id="long" name="long" value="-118.8328" required><br>
-          <label for="alt">SOTA Altitude (m):</label>
-          <input type="number" step="any" min="0.0" max="9000.000"  id="alt" name="alt" value="764" required><br>
-          <input type="submit" class="btn btn-primary" value="Calculate AZ">
-          <br><br>
-          <div v-show="isGenerating" class="spinner-border text-primary" role="status">
-            <span class="sr-only"></span>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark" style="height: 40px;line-height: 0.5">
+      <a class="navbar-brand p-2" href="#">SOTA Activation Zone Estimator</a>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link p-2">By: N6ARA</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="container-fluid" style="padding: 0px; border:0px">
+      <div class="row">
+        <div id="app" class="col-sm-4">
+          <div  id="polygontext" style="padding: 10px; border:0px">
+            <form id="form" v-on:submit.prevent="lookupSummit">
+              <label for="sotaref" style="padding-right: 10px;">SOTA REF:</label>
+              <input id="sotaref" name="sotaref" value="W6/CT-225">
+              {{lu_msg}}<br>
+              <input type="submit" class="btn btn-primary" value="Lookup Summit"><br><br>
+            </form>
+            <form id="form" v-on:submit.prevent="calcAZ">
+              <label for="lat" style="padding-right: 10px;">Latitude (deg):</label>
+              <input type="number" step="any" min="-90.000" max="90.000" id="lat" name="lat" value="34.0738" required><br>
+              <label for="long" style="padding-right: 10px;">Longitude (deg):</label>
+              <input type="number" step="any" min="-180.000" max="180.000"  id="long" name="long" value="-118.8328" required><br>
+              <label for="alt" style="padding-right: 10px;">SOTA Altitude (m):</label>
+              <input type="number" step="any" min="0.0" max="9000.000"  id="alt" name="alt" value="764" required><br>
+              <input type="submit" class="btn btn-primary" value="Calculate AZ">
+              <br><br>
+              <div v-show="isGenerating" class="spinner-border text-primary" role="status">
+                <span class="sr-only"></span>
+              </div>
+              Estimated Computation Time: ~1 min
+              <textarea id="wktStringTextArea" class="form-control" rows="4" @click="restoreDefaultColors()" v-model="info">
+              </textarea>
+              <button type="button" class="btn btn-primary" @click="plotWKT()">Plot AZ</button><br>
+            </form>
           </div>
-          Estimated Computation Time: ~1 min
-          <textarea id="wktStringTextArea" class="form-control" rows="4" @click="restoreDefaultColors()" v-model="info">
-          </textarea>
-          <button type="button" class="btn btn-primary" @click="plotWKT()">Plot AZ</button><br>
-        </form>
+        </div>
+        <div class="col-sm-8">
+          <div id="map" class="map" style="z-index: 0"></div>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -97,7 +103,8 @@ export default {
       draw: null,
       format: new WKT(),
       vector: vector,
-      isGenerating: false
+      isGenerating: false,
+      lu_msg: ''
     };
   },
   mounted: function() {
@@ -218,6 +225,29 @@ export default {
           this.info = error
         })
         .then( () => { this.isGenerating = false })
+    },
+    lookupSummit: function () {
+      this.isGenerating = true;
+      let sotaref = document.getElementById('sotaref').value;
+      let isDataAvailable = "";
+      axios
+        .get('https://api2.sota.org.uk/api/summits/' + sotaref)
+        .then(response => {
+          isDataAvailable = response.data.length;
+          document.getElementById('lat').value = response.data.latitude,
+          document.getElementById('long').value = response.data.longitude,
+          document.getElementById('alt').value = response.data.altM
+          this.lu_msg = ""
+        })
+        .catch(error => {
+          this.lu_msg = error
+        })
+        .then( () => { this.isGenerating = false })
+        .finally(() => {
+            if(isDataAvailable == 0)  {
+              this.lu_msg = "Summit Not found. Remember to include / and - in the SOTA REF"
+            }
+        })
     }
   }
 }
@@ -258,7 +288,7 @@ export default {
   }
   .map {
     width: 100%;
-    height:400px;
+    height:600px;
   }
 
 </style>
