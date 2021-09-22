@@ -9,11 +9,17 @@
         </li>
       </ul>
       <ul class="navbar-nav ms-auto">
+
         <li class="nav-item">
-          <a class="nav-link" href="" data-bs-target="#aboutModal" data-bs-toggle="modal">About</a>
+          <a class="btn btn-sm btn-outline-info" href="" data-bs-target="#aboutModal" data-bs-toggle="modal">About</a>
         </li>
+        &nbsp;
         <li class="nav-item">
-          <a class="nav-link" href="" data-bs-target="#contactModal" data-bs-toggle="modal">Contact</a>
+          <a class="btn btn-sm btn-outline-info" href="" data-bs-target="#contactModal" data-bs-toggle="modal">Contact</a>
+        </li>
+        &nbsp;
+        <li class="nav-item">
+          <a class="btn btn-sm btn-outline-info" data-bs-target="#linkModal" data-bs-toggle="modal" @click="createLink();">Create Link</a>
         </li>
       </ul>
     </nav>
@@ -62,10 +68,10 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body" align="center">
             arko 2600 at gmail dot com
             <br><br>
-            or 
+            *or* 
             <br><br>
             <a href="https://github.com/arkorobotics/azgen-web/issues">Open a GitHub Issue</a> - PR's welcome!<br>
           </div>
@@ -76,6 +82,26 @@
       </div>
     </div>
 
+    <!-- Link Modal -->
+    <div class="modal fade" id="linkModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Link</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <a v-bind:href="'http://activation.zone?summitRef=' + link_summitRef">http://activation.zone?summitRef={{link_summitRef}}</a>
+            <br>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Main Page -->
     <div class="container-fluid" style="padding: 0px; border:0px">
@@ -125,9 +151,11 @@
               <textarea id="wktStringTextArea" class="form-control" rows="4" @click="restoreDefaultColors()" v-model="info">
               </textarea>
               <br>
-              <input type="submit" class="btn btn-primary" value="Plot AZ!"><br>
+              <input type="submit" class="btn btn-primary" value="Plot AZ!">
+              <br>
             </form>
             
+
           </div>
         </div>
         <div class="col-sm-8">
@@ -197,7 +225,8 @@ export default {
       format: new WKT(),
       vector: vector,
       isGenerating: false,
-      lu_msg: ''
+      lu_msg: '',
+      link_summitRef: ''
     };
   },
   mounted: function() {
@@ -235,6 +264,12 @@ export default {
       document.getElementById("long").value = "";
       document.getElementById("alt").value = "";
     }
+    else if ( urlParams.has('summitRef') ) {
+      document.getElementById("sotaref").value = urlParams.get('summitRef');
+      document.getElementById("lat").value = "";
+      document.getElementById("long").value = "";
+      document.getElementById("alt").value = "";
+    }
     else if ( urlParams.has('lat') && urlParams.has('long') && urlParams.has('alt') ) {
       document.getElementById("sotaref").value = "";
       document.getElementById("lat").value = urlParams.get('lat');
@@ -243,6 +278,16 @@ export default {
     }
   },
   methods: {
+    createLink: function() {
+      if (document.getElementById("sotaref").value != '') {
+        this.link_summitRef = document.getElementById("sotaref").value;
+      } else if ( document.getElementById("lat").value != '' && document.getElementById("lat").value != '' && document.getElementById("alt").value != '' ) {
+        this.link_summitRef = "&lat=" + document.getElementById("lat").value + "&long=" + document.getElementById("long").value + "&alt=" + document.getElementById("alt").value;
+      }
+      else {
+        this.link_summitRef = '';
+      }
+    },
     // eslint-disable-next-line
     toEPSG4326: function(element, index, array) {
       element = element.getGeometry().transform('EPSG:3857', 'EPSG:4326');
@@ -329,8 +374,8 @@ export default {
         "sota_summit_alt_thres": 25
       }
       axios
-        //.post('http://localhost:8082', data)
-        .post('https://api.activation.zone', data)
+        .post('http://localhost:8082', data)
+        //.post('https://api.activation.zone', data)
         .then(response => {
           this.info = response.data.az
         })
