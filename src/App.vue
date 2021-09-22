@@ -1,4 +1,5 @@
 <template>
+  
   <div>
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark" style="height: 40px;line-height: 0.5">
       <a class="navbar-brand p-2" href="#">SOTA Activation Zone Estimator</a>
@@ -18,11 +19,11 @@
     </nav>
 
     <!-- About Modal -->
-    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">About</h5>
+            <h5 class="modal-title">About</h5>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -42,6 +43,7 @@
                 <a href="https://vk2gom.wordpress.com/2015/09/01/determining-activation-zones-in-google-earth-flood-tool/">Flood Tool</a> or a topography map program like <a href="https://caltopo.com/map.html">CalTopo</a>.<br><br>
             (3) This app is in beta and may be buggy. Results may not be accurate, but we will work to improve it over time.<br><br>
             (4) This app may be a little slow, but as more folks use it, the back end will build a cache of the DEM data and will respond faster over time.<br><br>
+            (5) We are not legally responsible for the use of this app. Do not trespass onto restricted property.
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -51,11 +53,11 @@
     </div>
 
     <!-- Contact Modal -->
-    <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Contact</h5>
+            <h5 class="modal-title">Contact</h5>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -73,6 +75,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- Main Page -->
     <div class="container-fluid" style="padding: 0px; border:0px">
@@ -124,6 +127,7 @@
               <br>
               <input type="submit" class="btn btn-primary" value="Plot AZ!"><br>
             </form>
+            
           </div>
         </div>
         <div class="col-sm-8">
@@ -197,6 +201,7 @@ export default {
     };
   },
   mounted: function() {
+    document.title =  'SOTA Activation Zone Estimator - By: N6ARA';
     let raster = new TileLayer({
       source: new XYZ({
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
