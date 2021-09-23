@@ -21,6 +21,8 @@
         <li class="nav-item">
           <a class="btn btn-sm btn-outline-info" data-bs-target="#linkModal" data-bs-toggle="modal" @click="createLink();">Create Link</a>
         </li>
+        &nbsp;
+        &nbsp;
       </ul>
     </nav>
 
@@ -189,6 +191,12 @@ import View from 'ol/View';
 import WKT from 'ol/format/WKT';
 import Draw from 'ol/interaction/Draw';
 
+import {transform} from 'ol/proj';
+import Point from 'ol/geom/Point';
+import {Icon} from 'ol/style';
+import Feature from 'ol/Feature';
+import markerIconBlue from '@/assets/summit.png'
+
 export default {
   name: 'App',
   data: function() {
@@ -214,6 +222,10 @@ export default {
       source: new VectorSource({ features: features }),
       style: styles
     });
+    let pin = new VectorLayer({
+      source: new VectorSource({ features: features }),
+      style: styles
+    });
     return {
       info: null,
       map: null,
@@ -224,6 +236,7 @@ export default {
       draw: null,
       format: new WKT(),
       vector: vector,
+      pin: pin,
       isGenerating: false,
       lu_msg: '',
       link_summitRef: ''
@@ -333,6 +346,7 @@ export default {
         return;
       } else {
         this.map.removeLayer(this.vector);
+        this.map.removeLayer(this.pin);
         this.features.clear();
         newFeature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
         this.features.push(newFeature);
@@ -359,6 +373,33 @@ export default {
       }));
       this.map.getView().fit(extent, this.map.getSize());
 
+      
+      let lat = document.getElementById('lat').value;
+      let long = document.getElementById('long').value;
+
+      const iconFeature = new Feature({
+        geometry: new Point(transform([long, lat], "EPSG:4326", "EPSG:3857")),
+      });
+      const iconStyle = new Style({
+        image: new Icon({
+          anchor: [0.5, 0.5],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+          src: markerIconBlue,
+        }),
+      });
+
+      iconFeature.setStyle(iconStyle);
+
+      const vectorSource = new VectorSource({
+        features: [iconFeature],
+      });
+
+      this.pin = new VectorLayer({
+        source: vectorSource,
+      });
+      
+      this.map.addLayer(this.pin);
     },
     calcAZ: function () {
       this.isGenerating = true;
@@ -374,8 +415,8 @@ export default {
         "sota_summit_alt_thres": 25
       }
       axios
-        .post('http://localhost:8082', data)
-        //.post('https://api.activation.zone', data)
+        //.post('http://localhost:8082', data)
+        .post('https://api.activation.zone', data)
         .then(response => {
           this.info = response.data.az
         })
