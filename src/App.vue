@@ -124,21 +124,21 @@
 
                 <div class="input-group mb-2">
                   <div class="input-group-prepend">
-                    <div class="input-group-text">Latitude (deg):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                    <div class="input-group-text">Latitude (deg):&nbsp;&nbsp;&nbsp;&nbsp;</div>
                   </div>
                   <input type="number" step="any" min="-90.000" max="90.000" id="lat" name="lat" value="34.1636" class="form-control">
                 </div>
 
                 <div class="input-group mb-2">
                   <div class="input-group-prepend">
-                    <div class="input-group-text">Longitude (deg):&nbsp;&nbsp;&nbsp;</div>
+                    <div class="input-group-text">Longitude (deg):&nbsp;</div>
                   </div>
                   <input type="number" step="any" min="-180.000" max="180.000"  id="long" name="long" value="-118.1967" class="form-control">
                 </div>
 
                 <div class="input-group mb-2">
                   <div class="input-group-prepend">
-                    <div class="input-group-text">SOTA Altitude (m):</div>
+                    <div class="input-group-text">Altitude (m):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                   </div>
                   <input type="number" step="any" min="0.0" max="9000.000"  id="alt" name="alt" value="576" class="form-control">
                 </div>
@@ -149,7 +149,8 @@
               <div v-show="isGenerating" class="spinner-border text-primary" role="status">
                 <span class="sr-only"></span>
               </div>
-              Estimated Computation Time: ~1 min
+              Estimated Computation Time: ~1 min<br>
+              AZ is not definitive and is estimated using 30m DEM.
               <textarea id="wktStringTextArea" class="form-control" rows="4" @click="restoreDefaultColors()" v-model="info">
               </textarea>
               <br>
