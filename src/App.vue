@@ -1,5 +1,4 @@
 <template>
-  
   <div>
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark" style="height: 40px;line-height: 0.5">
       <a class="navbar-brand p-2" href="#">SOTA Activation Zone Estimator</a>
@@ -37,6 +36,7 @@
             </button>
           </div>
           <div class="modal-body">
+            V0.1.0<br>
             <a href="http://activation.zone">activation.zone</a> generates a polygon which roughly represents the SOTA Activation Zone for a given summit.
             Users can either input the SOTA Reference or manually input the latitude, longitude, and altitude of the summit.
             <br><br>
