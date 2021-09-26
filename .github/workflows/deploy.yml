@@ -1,0 +1,32 @@
+on:
+  # Trigger the workflow on push,
+  # but only for the main branch
+  push:
+    branches:
+      - main
+name: 🚀 Build and Deploy to Prod!
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: 🏗️ Use Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: 🔨 Build Project
+        run: |
+          npm install
+          npm run build
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: 64.207.178.123
+          username: az_github
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./dist/
