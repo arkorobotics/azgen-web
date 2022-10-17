@@ -36,7 +36,7 @@
             </button>
           </div>
           <div class="modal-body">
-            V0.1.1<br>
+            V0.1.2<br>
             <a href="http://activation.zone">activation.zone</a> generates a polygon which roughly represents the SOTA Activation Zone for a given summit.
             Users can either input the SOTA Reference or manually input the latitude, longitude, and altitude of the summit.
             <br><br>
@@ -494,7 +494,7 @@ export default {
           
           // create file link in browser's memory
           // TODO: the browers memory may not be enough here? Is this really the best way to do things?
-          const url = window.URL.createObjectURL(new Blob([response.data], {type: 'text/plain;charset=utf-8'}));
+          const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url; 
           let sotaref_filename = document.getElementById('sotaref').value;
