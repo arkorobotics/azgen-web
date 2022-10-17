@@ -458,8 +458,8 @@ export default {
         "sota_summit_alt_thres": 25
       }
       axios
-        .post('http://localhost:8082', data)
-        //.post('https://api.activation.zone', data)
+        //.post('http://localhost:8082', data)
+        .post('https://api.activation.zone', data)
         .then(response => {
           this.info = response.data.az
         })
