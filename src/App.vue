@@ -487,8 +487,8 @@ export default {
       }
       //const config = { responseType: 'blob' };
       axios
-        .post('http://localhost:8082/gpx', data)
-        //.post('https://api.activation.zone/gpx', data)
+        //.post('http://localhost:8082/gpx', data)
+        .post('https://api.activation.zone/gpx', data)
         .then(response => {
           //this.info = response.data.az_gpx
           
