@@ -36,7 +36,7 @@
             </button>
           </div>
           <div class="modal-body">
-            V0.1.0<br>
+            V0.1.1<br>
             <a href="http://activation.zone">activation.zone</a> generates a polygon which roughly represents the SOTA Activation Zone for a given summit.
             Users can either input the SOTA Reference or manually input the latitude, longitude, and altitude of the summit.
             <br><br>
@@ -110,7 +110,7 @@
       <div class="row">
         <div id="app" class="col-sm-4">
           <div  id="polygontext" style="padding: 10px; border:0px">
-            <form id="form" v-on:submit.prevent="lookupSummit">
+            <form id="form" v-on:submit.prevent="lookupSummit()">
 
               <div class="col-auto">
                 <div class="input-group mb-2">
@@ -154,10 +154,15 @@
               <textarea id="wktStringTextArea" class="form-control" rows="4" @click="restoreDefaultColors()" v-model="info">
               </textarea>
               <br>
-              <input type="submit" class="btn btn-primary" value="Plot AZ!">
+              <input type="submit" class="btn btn-primary" value="Plot AZ!">&nbsp;
+              
               <br>
             </form>
-            
+
+            <form id="form" v-on:submit.prevent="lookupSummitAndDownloadGPX()">
+            <br>
+            <input type="submit" class="btn btn-secondary" value="Download GPX">
+            </form>
 
           </div>
         </div>
@@ -401,33 +406,12 @@ export default {
       });
       
       this.map.addLayer(this.pin);
+    },    
+    lookupSummitAndDownloadGPX: function () {
+      // Run the summit lookup function
+      this.lookupSummit(true);
     },
-    calcAZ: function () {
-      this.isGenerating = true;
-      let lat = document.getElementById('lat').value;
-      let long = document.getElementById('long').value;
-      let alt = document.getElementById('alt').value;
-      let data = {
-        "summit_ref": "W6SC229",
-        "summit_lat": lat,
-        "summit_long": long,
-        "summit_alt": alt,
-        "deg_delta": 0.040,
-        "sota_summit_alt_thres": 25
-      }
-      axios
-        //.post('http://localhost:8082', data)
-        .post('https://api.activation.zone', data)
-        .then(response => {
-          this.info = response.data.az
-        })
-        .catch(error => {
-          this.info = error
-        })
-        .then( () => { this.isGenerating = false })
-        .finally( () => this.plotWKT() )
-    },
-    lookupSummit: function () {
+    lookupSummit: function (dlFlag) {
       this.isGenerating = true;
       let sotaref = document.getElementById('sotaref').value;
       let isDataAvailable = "";
@@ -451,14 +435,80 @@ export default {
               if(isDataAvailable == 0)  {
                 this.lu_msg = "Summit Not found. Remember to include / and - in the SOTA REF"
               }
-              this.calcAZ();
+              this.calcAZ(dlFlag);
           })
       }
       // If not sotaref is provided, try calculating the AZ using the LLA fields
       else {
         this.lu_msg = ""
-        this.calcAZ();
+        this.calcAZ(dlFlag);
       }
+    },
+    calcAZ: function (dlFlag) {
+      this.isGenerating = true;
+      let lat = document.getElementById('lat').value;
+      let long = document.getElementById('long').value;
+      let alt = document.getElementById('alt').value;
+      let data = {
+        "summit_ref": "W6SC229",
+        "summit_lat": lat,
+        "summit_long": long,
+        "summit_alt": alt,
+        "deg_delta": 0.040,
+        "sota_summit_alt_thres": 25
+      }
+      axios
+        .post('http://localhost:8082', data)
+        //.post('https://api.activation.zone', data)
+        .then(response => {
+          this.info = response.data.az
+        })
+        .catch(error => {
+          this.info = error
+        })
+        .then( () => { this.isGenerating = false })
+        .then( () => this.plotWKT() )
+        .finally( () => { if (dlFlag) { this.downloadGPX() } })
+    },
+    downloadGPX: function () {
+      // Make API call to convert POLYGON field to GPX
+      // TODO: Update the code here to remove redudancy
+      let lat = document.getElementById('lat').value;
+      let long = document.getElementById('long').value;
+      let alt = document.getElementById('alt').value;
+
+      let data = {
+        "summit_ref": "W6SC229",
+        "summit_lat": lat,
+        "summit_long": long,
+        "summit_alt": alt,
+        "deg_delta": 0.040,
+        "sota_summit_alt_thres": 25
+      }
+      //const config = { responseType: 'blob' };
+      axios
+        //.post('http://localhost:8082/gpx', data)
+        .post('https://api.activation.zone/gpx', data)
+        .then(response => {
+          //this.info = response.data.az_gpx
+          
+          // create file link in browser's memory
+          // TODO: the browers memory may not be enough here? Is this really the best way to do things?
+          const url = window.URL.createObjectURL(new Blob([response.data], {type: 'text/plain;charset=utf-8'}));
+          const link = document.createElement('a');
+          link.href = url; 
+          let sotaref_filename = document.getElementById('sotaref').value;
+          sotaref_filename = sotaref_filename.replace("/", "");
+          sotaref_filename = sotaref_filename.replace("-", "");
+          link.setAttribute('download', 'AZ_' + sotaref_filename + '.gpx');
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(error => {
+          this.info = error
+        })
+        .then( () => { this.isGenerating = false })
+        .finally( () => this.isGenerating = false  )
     }
   }
 }

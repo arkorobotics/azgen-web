@@ -9,14 +9,17 @@ In App.vue, set the POST request URL to `localhost:8082` and make sure [azgen-ap
 ```
 
 ## Project setup
+At the root of the azgen-web directory:
 ```
 npm install
 ```
 
 ### Compiles and hot-reloads for development
+Run the following command and access the site by referencing the "App running at:" print out:
 ```
 npm run serve
 ```
+
 
 ### Compiles and minifies for production
 ```
