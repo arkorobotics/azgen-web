@@ -494,7 +494,7 @@ export default {
           
           // create file link in browser's memory
           // TODO: the browers memory may not be enough here? Is this really the best way to do things?
-          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/gpx+xml'}));
           const link = document.createElement('a');
           link.href = url; 
           let sotaref_filename = document.getElementById('sotaref').value;
