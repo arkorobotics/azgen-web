@@ -150,7 +150,7 @@
                 <span class="sr-only"></span>
               </div>
               Estimated Computation Time: ~1 min<br>
-              AZ is not definitive and is estimated using 30m DEM.
+              AZ is not definitive and is estimated using coarse DEM.
               <textarea id="wktStringTextArea" class="form-control" rows="4" @click="restoreDefaultColors()" v-model="info">
               </textarea>
               <br>
