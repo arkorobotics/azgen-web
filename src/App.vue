@@ -36,7 +36,7 @@
             </button>
           </div>
           <div class="modal-body">
-            V0.1.2<br>
+            V0.1.3<br>
             <a href="https://activation.zone">activation.zone</a> generates a polygon which roughly represents the SOTA Activation Zone for a given summit.
             Users can either input the SOTA Reference or manually input the latitude, longitude, and altitude of the summit.
             <br><br>
