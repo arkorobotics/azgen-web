@@ -1,32 +1,32 @@
 on:
-  # Trigger the workflow on push,
-  # but only for the main branch
   push:
     branches:
       - main
+      - develop
+
 name: 🚀 Build and Deploy to Prod!
+
 jobs:
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Get latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: 🏗️ Use Node.js 16
-        uses: actions/setup-node@v2
+      - name: 🏗️ Use Node.js 24
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '24'
 
       - name: 🔨 Build Project
         run: |
           npm install
           npm run build
 
-      - name: 📂 Sync files
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      - name: 📂 Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
         with:
-          server: 64.207.178.123
-          username: az_github
-          password: ${{ secrets.FTP_PASS }}
-          local-dir: ./dist/
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=azgen --branch=${{ github.ref_name }}
